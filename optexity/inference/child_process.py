@@ -458,6 +458,14 @@ async def task_processor():
                         )
                     continue
 
+
+            # Dev harness: run a local automation instead of the fetched one.
+            # Must stay after the fetch block to win when the fetch fails too.
+            _local = os.environ.get("OPTEXITY_LOCAL_AUTOMATION", "test_automation.json")
+            if os.path.exists(_local):
+                with open(_local, "r") as _f:
+                    task.automation = Automation.model_validate(json.load(_f))
+                logger.warning(f"Using LOCAL automation override from {_local}")
             task_running = True
             last_task_start_time = datetime.now(timezone.utc)
             current_task_timeout_minutes = task.max_timeout_in_minutes

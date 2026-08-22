@@ -1,0 +1,15 @@
+{
+    "id": "22de3f7d",
+    "workflow": "roboform",
+    "url": "https://www.roboform.com/filling-test-all-fields",
+    "built_at": "2026-08-22T23:40:09+00:00",
+    "built_by": "rules",
+    "steps_recorded": 15,
+    "actions_recorded": 36,
+    "nodes": 4,
+    "dropped": {
+        "read_only": 11,
+        "done": 1,
+        "repeat": 20
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "url": "https://www.saucedemo.com/",
+    "parameters": {
+        "input_parameters": {
+            "search_query": ["standard_user"]
+        },
+        "generated_parameters": {}
+    },
+    "nodes": [
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "agentic_task": {
+                    "task": "On saucedemo.com, complete a purchase in this order:\n1. Type '{search_query[0]}' into the Username field and 'secret_sauce' into the Password field, then click Login.\n2. On the products page, click the 'Add to cart' button for 'Sauce Labs Backpack'.\n3. Click the shopping cart icon in the top right to open the cart.\n4. Click the 'Checkout' button.\n5. Fill First Name as 'Soham', Last Name as 'Haldar', Zip/Postal Code as '700001', then click Continue.\n6. On the overview page, click Finish.\nStop once the page shows 'Thank you for your order!'.",
+                    "max_steps": 20,
+                    "backend": "browser_use"
+                }
+            }
+        }
+    ]
+}

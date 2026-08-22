@@ -1,0 +1,287 @@
+{
+    "browser_channel": "chromium",
+    "backend": "browser-use",
+    "allow_cookies": false,
+    "max_retries": 0,
+    "expected_downloads": 0,
+    "remove_empty_nodes_in_axtree": true,
+    "url": "https://www.saucedemo.com/",
+    "reuse_page_if_already_on_url": false,
+    "take_final_screenshot": true,
+    "parameters": {
+        "input_parameters": {
+            "search_query": [
+                "standard_user"
+            ]
+        },
+        "secure_parameters": {},
+        "generated_parameters": {}
+    },
+    "nodes": [
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "input_text": {
+                    "command": "locator(\"input[data-test='username']\")",
+                    "prompt_instructions": "Enter the value in the Username field",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "input_text": "standard_user",
+                    "is_slider": false,
+                    "fill_or_type": "fill",
+                    "press_enter": false,
+                    "click_before_input": true
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 0.3,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "input_text": {
+                    "command": "locator(\"input[data-test='password']\")",
+                    "prompt_instructions": "Enter the value in the Password field",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "input_text": "secret_sauce",
+                    "is_slider": false,
+                    "fill_or_type": "fill",
+                    "press_enter": false,
+                    "click_before_input": true
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 0.3,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "locator(\"input[data-test='login-button']\")",
+                    "prompt_instructions": "Click the Login element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "locator(\"button[data-test='add-to-cart-sauce-labs-backpack']\")",
+                    "prompt_instructions": "Click the Add to cart element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "locator(\"div[id='shopping_cart_container']\")",
+                    "prompt_instructions": "Click the 1 element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "locator(\"button[data-test='checkout']\")",
+                    "prompt_instructions": "Click the Checkout element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "input_text": {
+                    "command": "locator(\"input[data-test='firstName']\")",
+                    "prompt_instructions": "Enter the value in the First Name field",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "input_text": "Soham",
+                    "is_slider": false,
+                    "fill_or_type": "fill",
+                    "press_enter": false,
+                    "click_before_input": true
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 0.3,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "input_text": {
+                    "command": "locator(\"input[data-test='lastName']\")",
+                    "prompt_instructions": "Enter the value in the Last Name field",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "input_text": "Haldar",
+                    "is_slider": false,
+                    "fill_or_type": "fill",
+                    "press_enter": false,
+                    "click_before_input": true
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 0.3,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "input_text": {
+                    "command": "locator(\"input[data-test='postalCode']\")",
+                    "prompt_instructions": "Enter the value in the Zip/Postal Code field",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "input_text": "700001",
+                    "is_slider": false,
+                    "fill_or_type": "fill",
+                    "press_enter": false,
+                    "click_before_input": true
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 0.3,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "locator(\"input[data-test='continue']\")",
+                    "prompt_instructions": "Click the Continue element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "locator(\"button[data-test='finish']\")",
+                    "prompt_instructions": "Click the Finish element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        }
+    ],
+    "post_processing_nodes": []
+}

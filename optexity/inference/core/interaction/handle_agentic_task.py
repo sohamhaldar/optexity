@@ -1,6 +1,6 @@
 import logging
 
-from browser_use import Agent, BrowserSession, Tools
+from browser_use import Agent, BrowserSession, Tools, step_cache
 
 from optexity.inference.infra.browser import Browser
 from optexity.inference.models import normalize_model
@@ -66,10 +66,36 @@ async def handle_agentic_task(
             calculate_cost=True,
             save_conversation_path=step_directory,
         )
+        # Both probes go through get_locator_from_command, the same eval the
+        # deterministic replay uses, so the exact emitted string is what is checked.
+        async def count_matches(command: str) -> int:
+            locator = await browser.get_locator_from_command(command)
+            return await locator.count() if locator is not None else 0
+
+        async def position_of(command: str, xpath: str) -> int:
+            """Index of the element at `xpath` among the command's matches, -1 if absent."""
+            page = await browser.get_current_page()
+            locator = await browser.get_locator_from_command(command)
+            if page is None or locator is None:
+                return -1
+            target = await page.locator(f"xpath=/{xpath.lstrip('/')}").element_handle()
+            if target is None:
+                return -1
+            for index in range(await locator.count()):
+                handle = await locator.nth(index).element_handle()
+                if handle and await page.evaluate("([a, b]) => a === b", [handle, target]):
+                    return index
+            return -1
+
+        step_cache.set_page_probe(count_matches, position_of)
+
         logger.debug(f"Starting browser session for agentic task {browser.cdp_url} ")
         await agent.browser_session.start()
         logger.debug(f"Finally running agentic task on browser_use {browser.cdp_url} ")
-        history = await agent.run(max_steps=agentic_task_action.max_steps)
+        try:
+            history = await agent.run(max_steps=agentic_task_action.max_steps)
+        finally:
+            step_cache.set_page_probe(None, None)
         logger.debug(f"Agentic task completed on browser_use {browser.cdp_url} ")
 
         agent.stop()
