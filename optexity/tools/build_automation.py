@@ -1,15 +1,19 @@
 """Turn a recorded agent run into a deterministic Automation.
 
-    python -m optexity.tools.build_automation cache.jsonl out.json --url URL
+    python -m optexity.tools.build_automation recordings/saucedemo
 
-Reads the JSONL from browser_use.step_cache, drops what a replay does not need,
-and validates the result. No LLM: every `command` comes verbatim from the cache.
+Works on one recording directory, holding source.json (what was recorded) and
+cache.jsonl (what the agent did), and writes cached.json alongside them plus a
+meta.json tying the three together. No LLM: every `command` comes verbatim from
+the cache.
 """
 
 import argparse
+import hashlib
 import json
 import logging
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -145,6 +149,8 @@ def prune(steps: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, 
 def describe(action: dict[str, Any]) -> str:
     """Element description for prompt_instructions, the LLM's only handle once a
     command stops matching."""
+    if action.get("prompt_instructions"):
+        return action["prompt_instructions"]
     element = action.get("element") or {}
     attributes = element.get("attributes") or {}
     label = (
@@ -186,7 +192,9 @@ def to_node(action: dict[str, Any]) -> ActionNode:
         )
     elif name == "click":
         interaction = InteractionAction(
-            click_element=ClickElementAction(command=command, prompt_instructions=instructions)
+            click_element=ClickElementAction(
+                command=command, prompt_instructions=instructions, force=action.get("force", False)
+            )
         )
     elif name == "select_dropdown":
         interaction = InteractionAction(
@@ -218,12 +226,60 @@ def to_node(action: dict[str, Any]) -> ActionNode:
     return ActionNode(
         type="action_node",
         interaction_action=interaction,
-        end_sleep_time=END_SLEEP_SECONDS.get(name, DEFAULT_END_SLEEP_SECONDS),
+        end_sleep_time=action.get("end_sleep_time", END_SLEEP_SECONDS.get(name, DEFAULT_END_SLEEP_SECONDS)),
     )
 
 
-def build(steps: list[dict[str, Any]], url: str | None, parameters: Parameters) -> tuple[Automation, dict[str, int]]:
+def automation_from(actions: list[dict[str, Any]], url: str, parameters: Parameters) -> Automation:
+    return Automation(url=url, parameters=parameters, nodes=[to_node(a) for a in actions])
+
+
+def llm_actions(recorded: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Steps chosen by a model rather than by the pruning rules.
+
+    Rejects any command the recording does not contain, so a fluent-sounding
+    locator nobody verified cannot reach the automation.
+    """
+    from optexity.inference.agents.automation_builder.automation_builder import (
+        AutomationBuilderAgent,
+    )
+    from optexity.inference.models import get_llm_model_with_fallback
+
+    docs = Path(__file__).parents[2] / "docs/docs/advanced/locators.mdx"
+    built, usage = AutomationBuilderAgent(get_llm_model_with_fallback(None, None, True)).build(
+        [{k: a[k] for k in ("action", "command", "params", "element") if a.get(k)} for a in recorded],
+        docs.read_text() if docs.exists() else "",
+    )
+    logger.info(f"llm returned {len(built.steps)} step(s), {usage.total_tokens} tokens")
+
+    verified = {a["command"] for a in recorded if a.get("command")}
+    for step in built.steps:
+        if step.command not in verified:
+            raise SystemExit(f"model invented a command not in the recording: {step.command!r}")
+
+    by_command = {a.get("command"): a for a in recorded}
+    return [
+        by_command[s.command]
+        | {
+            "action": s.action,
+            "params": {"text": s.input_text} if s.input_text is not None else {},
+            "prompt_instructions": s.prompt_instructions,
+            "press_enter": s.press_enter,
+        }
+        for s in built.steps
+    ]
+
+
+def build(
+    steps: list[dict[str, Any]], url: str | None, parameters: Parameters, use_llm: bool = False
+) -> tuple[Automation, dict[str, int]]:
     actions, dropped = prune(steps)
+    if use_llm:
+        # Key presses carry no element, but the model has to see them to fold an
+        # Enter into the input it belongs to.
+        actions = llm_actions(
+            [a for s in steps for a in s["actions"] if not a["read_only"] and a["action"] != "done"]
+        )
     if not actions:
         raise SystemExit("nothing replayable in the cache - did the agent do anything?")
 
@@ -231,12 +287,12 @@ def build(steps: list[dict[str, Any]], url: str | None, parameters: Parameters) 
     for action in unverified:
         logger.warning(f"step {action['step']}: {action.get('command')!r} was not unique on the page")
 
-    automation = Automation(
-        url=url or steps[0]["url"],
-        parameters=parameters,
-        nodes=[to_node(a) for a in actions],
-    )
-    return automation, dropped
+    return automation_from(actions, url or steps[0]["url"], parameters), dropped
+
+
+def recording_id(source: Path) -> str:
+    """Stable per source automation, so re-recording the same workflow keeps its id."""
+    return hashlib.sha256(source.read_bytes()).hexdigest()[:8]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -244,28 +300,46 @@ def main(argv: list[str] | None = None) -> int:
     # basicConfig a no-op.
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s", force=True)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("cache", type=Path, help="JSONL written by browser_use.step_cache")
-    parser.add_argument("out", type=Path, help="where to write the deterministic automation")
-    parser.add_argument("--url", help="starting url (defaults to the first recorded step)")
+    parser.add_argument("recording", type=Path, help="directory holding source.json and cache.jsonl")
     parser.add_argument(
-        "--params",
-        type=Path,
-        help="automation to copy input_parameters from, so the rebuilt one keeps the same contract",
+        "--llm", action="store_true", help="let a model choose the steps instead of the prune rules"
     )
     args = parser.parse_args(argv)
 
-    steps = load_steps(args.cache)
-    parameters = Parameters(input_parameters={}, generated_parameters={})
-    if args.params:
-        parameters = Automation.model_validate(json.loads(args.params.read_text())).parameters
+    source_path, cache_path = args.recording / "source.json", args.recording / "cache.jsonl"
+    for required in (source_path, cache_path):
+        if not required.exists():
+            raise SystemExit(f"{required} not found")
 
-    automation, dropped = build(steps, args.url, parameters)
-    args.out.write_text(json.dumps(automation.model_dump(exclude_none=True, mode="json"), indent=4) + "\n")
+    source = Automation.model_validate(json.loads(source_path.read_text()))
+    steps = load_steps(cache_path)
+    automation, dropped = build(steps, source.url, source.parameters, args.llm)
 
-    total = sum(len(s["actions"]) for s in steps)
-    logger.info(f"{len(steps)} steps, {total} actions -> {len(automation.nodes)} nodes")
+    out = args.recording / ("cached_llm.json" if args.llm else "cached.json")
+    out.write_text(json.dumps(automation.model_dump(exclude_none=True, mode="json"), indent=4) + "\n")
+
+    recorded = sum(len(s["actions"]) for s in steps)
+    (args.recording / "meta.json").write_text(
+        json.dumps(
+            {
+                "id": recording_id(source_path),
+                "workflow": args.recording.name,
+                "url": source.url,
+                "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "built_by": "llm" if args.llm else "rules",
+                "steps_recorded": len(steps),
+                "actions_recorded": recorded,
+                "nodes": len(automation.nodes),
+                "dropped": {k: v for k, v in dropped.items() if v},
+            },
+            indent=4,
+        )
+        + "\n"
+    )
+
+    logger.info(f"{len(steps)} steps, {recorded} actions -> {len(automation.nodes)} nodes")
     logger.info("dropped: " + ", ".join(f"{v} {k}" for k, v in dropped.items() if v))
-    logger.info(f"wrote {args.out}")
+    logger.info(f"wrote {out} and {args.recording / 'meta.json'}")
     return 0
 
 

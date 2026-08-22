@@ -20,6 +20,7 @@ from optexity.exceptions import (
 from optexity.inference.agents.index_prediction.action_prediction_locator_axtree import (
     ActionPredictionLocatorAxtree,
 )
+from optexity.inference.core import fallback_log
 from optexity.inference.infra.browser import Browser
 from optexity.inference.models import get_llm_model_with_fallback
 from optexity.schema.memory import BrowserState, Memory
@@ -515,6 +516,11 @@ class LocatorExtraction:
                 )
                 return
             candidates = cls.locator_candidates(element, method)
+            if memory is not None:
+                fallback_log.note_fallback(
+                    memory.automation_state.step_index,
+                    candidates[0]["locator"] if candidates else None,
+                )
             if candidates:
                 logger.info(
                     f"LLM fallback locator [index {index}]: {candidates[0]['locator']} "

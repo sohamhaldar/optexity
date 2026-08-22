@@ -12,6 +12,7 @@ from optexity.inference.core.interaction.handle_select_utils import (
     SelectOptionValue,
     smart_select,
 )
+from optexity.inference.core import fallback_log
 from optexity.inference.core.interaction.utils import (
     LocatorExtraction,
     handle_download,
@@ -226,6 +227,9 @@ async def command_based_action_with_retry(
         last_error = "error in executing command"
     logger.debug(
         f"{action.__class__.__name__} failed after {max_tries} tries: {last_error}"
+    )
+    fallback_log.note_failure(
+        memory.automation_state.step_index, action.command, last_error
     )
 
     if last_error and action.assert_locator_presence:
