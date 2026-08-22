@@ -171,6 +171,15 @@ class ActualBrowser:
         existing["download"]["default_directory"] = download_dir
         existing["download"]["prompt_for_download"] = False
 
+        # Chrome's save-password and breach prompts are browser UI drawn over
+        # the page, so no locator can dismiss them and the next click lands on
+        # the overlay. The command-line flags alone do not stop them; these
+        # profile keys do.
+        existing.setdefault("credentials_enable_service", False)
+        existing.setdefault("profile", {})
+        existing["profile"]["password_manager_enabled"] = False
+        existing["profile"]["password_manager_leak_detection"] = False
+
         prefs_path.write_text(json.dumps(existing))
         logger.info(
             f"Seeded print prefs at {prefs_path} -> save PDFs to {download_dir}"
@@ -181,7 +190,15 @@ class ActualBrowser:
             # ---- security / isolation (Playwright parity)
             # "--disable-site-isolation-trials",
             # "--disable-web-security",
-            "--disable-features=IsolateOrigins,site-per-process",
+            # Chrome only honours the last --disable-features, so everything
+            # disabled anywhere has to be listed here. The password and leak
+            # prompts are browser UI, not page content: nothing on the page can
+            # dismiss them and they sit over the next click.
+            "--disable-features=IsolateOrigins,site-per-process,PasswordManagerEnabled,"
+            "PasswordManagerOnboarding,PasswordLeakDetection,AutofillServerCommunication",
+            "--disable-save-password-bubble",
+            "--password-store=basic",
+            "--use-mock-keychain",
             "--allow-running-insecure-content",
             # "--ignore-certificate-errors",
             "--ignore-ssl-errors",
