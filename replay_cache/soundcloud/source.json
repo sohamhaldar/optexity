@@ -1,0 +1,21 @@
+{
+    "url": "https://soundcloud.com",
+    "parameters": {
+        "input_parameters": {
+            "search_query": ["juice wrld"]
+        },
+        "generated_parameters": {}
+    },
+    "nodes": [
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "agentic_task": {
+                    "task": "On soundcloud.com, do the following in order:\n1. If a cookie banner or consent dialog is showing, dismiss or accept it.\n2. Click the search box at the top of the page and type: {search_query[0]}\n3. Press Enter to run the search and wait for the results page to load.\n4. On the results page, click the title of the first track in the list. This opens that track's own page.\n5. On the track page, click the large play button to start playback.\nStop once the track is playing. Do not open any other pages.",
+                    "max_steps": 20,
+                    "backend": "browser_use"
+                }
+            }
+        }
+    ]
+}

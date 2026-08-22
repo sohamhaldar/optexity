@@ -1,6 +1,6 @@
 """Run a cached automation repeatedly, fixing whatever still needs the LLM.
 
-    python -m optexity.tools.learn recordings/saucedemo --endpoint NAME
+    python -m optexity.tools.learn replay_cache/saucedemo --endpoint NAME
 
 Each pass runs the recording's cached.json, finds the nodes that fell back to
 the LLM, and either corrects their locator, forces the click, or gives the page

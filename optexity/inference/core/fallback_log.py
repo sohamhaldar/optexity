@@ -33,6 +33,7 @@ def note_fallback(step: int, best_candidate: str | None) -> None:
         return
     try:
         row = _pending.pop(step, {"step": step, "failed_command": None, "error": ""})
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         with open(path, "a") as f:
             f.write(json.dumps(row | {"best_candidate": best_candidate}) + "\n")
     except Exception as e:

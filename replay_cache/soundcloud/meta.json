@@ -1,0 +1,16 @@
+{
+    "id": "afca97e1",
+    "workflow": "soundcloud",
+    "url": "https://soundcloud.com",
+    "built_at": "2026-08-22T23:40:09+00:00",
+    "built_by": "rules",
+    "steps_recorded": 20,
+    "actions_recorded": 22,
+    "nodes": 4,
+    "dropped": {
+        "read_only": 15,
+        "done": 1,
+        "redundant_click": 1,
+        "folded_enter": 1
+    }
+}

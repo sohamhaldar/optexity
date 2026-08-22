@@ -1,0 +1,15 @@
+{
+    "id": "83bd641c",
+    "workflow": "saucedemo",
+    "url": "https://www.saucedemo.com/",
+    "built_at": "2026-08-22T23:40:09+00:00",
+    "built_by": "rules",
+    "steps_recorded": 18,
+    "actions_recorded": 23,
+    "nodes": 11,
+    "dropped": {
+        "read_only": 6,
+        "done": 1,
+        "repeat": 5
+    }
+}

@@ -1,6 +1,6 @@
 """Turn a recorded agent run into a deterministic Automation.
 
-    python -m optexity.tools.build_automation recordings/saucedemo
+    python -m optexity.tools.build_automation replay_cache/saucedemo
 
 Works on one recording directory, holding source.json (what was recorded) and
 cache.jsonl (what the agent did), and writes cached.json alongside them plus a

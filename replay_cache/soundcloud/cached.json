@@ -1,0 +1,119 @@
+{
+    "browser_channel": "chromium",
+    "backend": "browser-use",
+    "allow_cookies": false,
+    "max_retries": 0,
+    "expected_downloads": 0,
+    "remove_empty_nodes_in_axtree": true,
+    "url": "https://soundcloud.com",
+    "reuse_page_if_already_on_url": false,
+    "take_final_screenshot": true,
+    "parameters": {
+        "input_parameters": {
+            "search_query": [
+                "juice wrld"
+            ]
+        },
+        "secure_parameters": {},
+        "generated_parameters": {}
+    },
+    "nodes": [
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "get_by_label(\"Close\")",
+                    "prompt_instructions": "Click the Close element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "input_text": {
+                    "command": "locator(\"input[name='q']\").nth(0)",
+                    "prompt_instructions": "Enter the value in the Search field",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "input_text": "juice wrld",
+                    "is_slider": false,
+                    "fill_or_type": "fill",
+                    "press_enter": true,
+                    "click_before_input": true
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 0.3,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "get_by_role(\"link\", name=\"We Don't Get Along (with Marshmello)\").nth(1)",
+                    "prompt_instructions": "Click the We Don't Get Along (with Marshmello) element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        },
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "max_tries": 10,
+                "max_timeout_seconds_per_try": 1.0,
+                "verify_before_step": true,
+                "click_element": {
+                    "command": "get_by_label(\"Play current\")",
+                    "prompt_instructions": "Click the Play current element",
+                    "skip_command": false,
+                    "skip_prompt": false,
+                    "assert_locator_presence": false,
+                    "double_click": false,
+                    "expect_download": false,
+                    "button": "left",
+                    "mouse_click": false,
+                    "force": false
+                }
+            },
+            "before_sleep_time": 0.0,
+            "end_sleep_time": 1.5,
+            "expect_new_tab": false,
+            "max_new_tab_wait_time": 0.0
+        }
+    ],
+    "post_processing_nodes": []
+}
